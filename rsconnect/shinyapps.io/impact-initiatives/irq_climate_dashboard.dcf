@@ -1,0 +1,14 @@
+name: irq_climate_dashboard
+title:
+username:
+account: impact-initiatives
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 8501975
+bundleId: 7079471
+url: https://impact-initiatives.shinyapps.io/irq_climate_dashboard/
+when: 1681297236.79042
+lastSyncTime: 1681297236.79043
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: app_scripts/app_old.R|02_scripts|04_py_env|gee_data

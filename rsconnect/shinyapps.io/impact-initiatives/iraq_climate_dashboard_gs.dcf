@@ -1,0 +1,14 @@
+name: iraq_climate_dashboard_gs
+title: iraq_climate_dashboard_gs
+username:
+account: impact-initiatives
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 8828947
+bundleId: 7079514
+url: https://impact-initiatives.shinyapps.io/iraq_climate_dashboard_gs/
+when: 1681298108.08781
+lastSyncTime: 1681298108.08782
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: app_scripts/app_old.R|02_scripts|04_py_env|gee_data

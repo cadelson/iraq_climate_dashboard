@@ -1,0 +1,14 @@
+name: 11_IRQ_BHA_Dashoard-master_ca
+title: 11_IRQ_BHA_Dashoard-master_ca
+username:
+account: impact-initiatives
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 8550924
+bundleId: 6951288
+url: https://impact-initiatives.shinyapps.io/11_IRQ_BHA_Dashoard-master_ca/
+when: 1678701215.56845
+lastSyncTime: 1678701215.56846
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: 02_scripts|04_py_env
