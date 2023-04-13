@@ -4,7 +4,7 @@
 # DATE CREATED: August 22, 2022
 # NOTES: Adapted by new data specialist beginning in Feb 2023 - 1) writing for methodology updated
 #       2) new indicators added 3) reading in of files from join_data, updated to one df 4) data 
-#       updated with 2023 5) year filter added
+#       updated with 2023
 
 rm(list = ls())
 # library -----------------------------------------------------------------
@@ -41,9 +41,6 @@ indicator_list <- data.frame(
 "3-months SPI" <- read_feather("05_outputs/processed_indicators/three_month_spi")
 "12-months SPI" <- read_feather("05_outputs/processed_indicators/twelve_month_spi")
 
-
-#subdistrict_map <- read_csv("05_outputs/sub_district_values.csv")
-
 ##### admin boundaries 
 admin_boundary_path <-  "01_inputs/03_admin_boundary/"
 admin1_boundary  <-st_read(paste0(admin_boundary_path,"/irq_admbnda_adm1_cso_20190603.shp"))
@@ -51,7 +48,6 @@ admin1_boundary  <-st_read(paste0(admin_boundary_path,"/irq_admbnda_adm1_cso_201
 base_map <- leaflet::leaflet() %>% leaflet::addProviderTiles(leaflet::providers$CartoDB.Positron) %>% 
   leaflet::addPolygons(data = admin1_boundary, color = "#58585A",
                        weight = 2, dashArray = "12", fillColor = "transparent") 
-  # 
 
 # ui ---------------------------------------------------------------------
 ui <-fluidPage(
