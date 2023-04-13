@@ -46,18 +46,11 @@ indicator_list <- data.frame(
 
 ##### admin boundaries 
 admin_boundary_path <-  "01_inputs/03_admin_boundary/"
-#admin_zero <-st_read(paste0(admin_boundary_path,"/irq_admbnda_adm0_cso_itos_20190603.shp")) %>% ms_simplify(keep = .3)
-admin1_boundary  <-st_read(paste0(admin_boundary_path,"/irq_admbnda_adm1_cso_20190603.shp")) #%>% ms_simplify(keep = .02)
-#admin2_boundary  <-st_read(paste0(admin_boundary_path,"/irq_admbnda_adm2_cso_20190603.shp"))%>% ms_simplify(keep = .05)
+admin1_boundary  <-st_read(paste0(admin_boundary_path,"/irq_admbnda_adm1_cso_20190603.shp"))
 # leaflet base map --------------------------------------------------------
 base_map <- leaflet::leaflet() %>% leaflet::addProviderTiles(leaflet::providers$CartoDB.Positron) %>% 
-  #leaflet::addPolygons(data = admin_zero,color = "#EE5859", fillColor = "transparent") %>%
   leaflet::addPolygons(data = admin1_boundary, color = "#58585A",
-                       weight = 2, dashArray = "12", fillColor = "transparent")  #%>% 
-  # leaflet::addPolygons(data = admin2_boundary, color = "#58585A",
-  #                      label = ~htmlEscape(ADM2_EN),
-  #                      labelOptions = labelOptions(noHide = T, textOnly = TRUE, textsize = "9px"),
-  #                      weight = .5, dashArray = "12", fillColor = "transparent")
+                       weight = 2, dashArray = "12", fillColor = "transparent") 
   # 
 
 # ui ---------------------------------------------------------------------
@@ -167,56 +160,24 @@ ui <-fluidPage(
                htmlOutput("test_sheet"),
                shiny::em("Source: ACF/UoM"),
              ) # end mainpanel 3
-    )
-    # tabPanel("Climate Indicator Subdistrict",
-    #          mainPanel(width = 12,
-    #                    br(),
-    #                    h5(strong("Climate change is adversely affecting Iraq. REACH has developed this climate monitoring dashboard to support the humanitarian community and implementing agencies to quickly analyze and respond to hotspots. Note the most recent available month will differ due to the variance in publishing frequency of the satellite data.")),
-    #                    hr(),
-    #                    ##################### input ###############################
-    #                    tags$div(pickerInput("select_climate_indicator_subdistrict",
-    #                                         label = "Select Climate Indicator:",
-    #                                         choices = lapply(split(indicator_list$name, indicator_list$group), as.list),
-    #                                         selected = "Temperature anomaly",
-    #                                         multiple = F,
-    #                                         options = pickerOptions(title = "Select", actionsBox = TRUE, liveSearch = TRUE)
-    #                    ), style="display:inline-block"),
-    #                    tags$div(pickerInput("select_date_subdistrict",
-    #                                         label = "Select Date:",
-    #                                         choices = NULL,
-    #                                         selected = NULL,
-    #                                         multiple = F,
-    #                                         options = pickerOptions(title = "Select", actionsBox = TRUE, liveSearch = TRUE)
-    #                    ),style="display:inline-block"),
-    #                    actionButton("run_subdistrict", "Show result"),
-                       # div(class = "outer", tags$style(type = "text/css", ".outer {position: fixed; top: 200px; left: 0; right: 0; bottom: 0; overflow: hidden; padding: 0}"),
-                       #     leafglOutput("map",width ="100%", height = "100%"))
-             
+    )        
      # end main panel  
     # End table 3
   ) # end navar page
 ) # end fluid page
 # server ------------------------------------------------------------------
 server <- function(input, output,session){
-  date_selected <-  reactive({input$select_date}) #%>% bindCache(input$select_date)
-  #date_selected_subdistrict <-  reactive({input$select_date_subdistrict}) 
+  date_selected <-  reactive({input$select_date})
   indicator <- reactive(input$select_climate_indicator)
-  #indicator_subdistrict <- reactive(input$select_climate_indicator_subdistrict)
-  indicator_df1 <- reactive({get(indicator())}) #%>% bindCache(input$select_climate_indicator)
-  #indicator_df1_subdistrict <- reactive({get(indicator_subdistrict())})
+  indicator_df1 <- reactive({get(indicator())}) 
   
-
   available_date <- reactive({indicator_df1()$date %>% unique()})
-  #available_date_subdistrict <- reactive({indicator_df1_subdistrict()$date %>% unique()})
   observe({updatePickerInput(session, "select_date", choices = paste0(c(available_date())))})
-  #observe({updatePickerInput(session, "select_date_subdistrict", choices = paste0(c(available_date_subdistrict())))})
   
   ########################## FILTER AND JOIN ###########################
   df <- eventReactive(input$run,{indicator_df1() %>% filter(date == date_selected())})
-  #df_subdistrict <- eventReactive(input$run_subdistrict,{indicator_df1_subdistrict() %>% filter(date == date_selected_subdistrict())})
-  
+
   grid_with_df <- eventReactive(input$run,{grid %>% left_join(df(),by = "FID") %>% filter(!is.na(value))})
-  #grid_with_df_subdistrict <- eventReactive(input$run,{admin2_boundary %>% left_join(df_subdistrict(),by = "ADM2_EN") %>% filter(!is.na(value))})
   
   #values for coloring ------------------------------------------------------
   column_names <- c("Precipitation deficit" = "value",
@@ -237,12 +198,7 @@ server <- function(input, output,session){
       mutate(value2 = .data[[column_names[input$select_climate_indicator]]])
     return(grid_with_df1)
   })
-  # grid_with_df1_subdistrict <- eventReactive(input$run_subdistrict,{
-  #   grid_with_df1_subdistrict <- grid_with_df_subdistrict() %>%
-  #     mutate(value2 = .data[[column_names[input$select_climate_indicator_subdistrict]]])
-  #   return(grid_with_df1)
-  # })
-  # 
+
   # color -------------------------------------------------------------------
   clr <- eventReactive(input$run,{
     if(input$select_climate_indicator %in%  c("Precipitation deficit","12-months SPI","9-months SPI","3-months SPI")) {
@@ -323,8 +279,6 @@ server <- function(input, output,session){
                                                       "Value:",  grid_with_df1()$value))  %>%
       setView(lat = 33.312805,lng = 44.361488,zoom = 6) %>% 
       addMiniMap() %>% 
-      #addSearchOSM()%>% 
-      # addLegend("topright",pal = clr(), values = grid_with_df()$value)
       addLegend(
         colors = add_legend_df()$color,
         labels =add_legend_df()$label,
